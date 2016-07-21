@@ -39,7 +39,6 @@ public class HumanFade : GameEvent
 	}
 }
 
-
 public class TeleportEvent : GameEvent
 {
 	public int id{ get; private set;}
