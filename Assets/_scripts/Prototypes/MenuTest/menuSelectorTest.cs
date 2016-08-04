@@ -32,25 +32,30 @@ public class menuSelectorTest : MonoBehaviour {
 
 		if (Physics.Raycast (m_Ray, out m_Hit)) {		
 			m_CurrentObject = m_Hit.transform.gameObject;
-	
-			//if the selection has changed
-			if (m_CurrentObject != m_LastObject) { 
 
-				// the first loop, m_LastObject will be null
-				if (m_LastObject != null) {
-					// only affect objects with VR interactivity
-					if (m_LastObject.GetComponent<VRInteractiveItem> () != null) {
-						Debug.Log ("Exited: " + m_LastObject.name);
-						m_LastObject.GetComponent<VRInteractiveItem> ().Out ();					
-					}				
-				}
+			if (m_CurrentObject.GetComponent<VRInteractiveItem> () != null) {
+				//if the selection has changed
+				if (m_CurrentObject != m_LastObject) { 
+					
+					// the first loop, m_LastObject will be null
+					if (m_LastObject != null) {
+						if (m_LastObject.GetComponent<VRInteractiveItem> () != null) {
+							Debug.Log ("Exited: " + m_LastObject.name);
+							m_LastObject.GetComponent<VRInteractiveItem> ().Out ();		
+						}
+					}
 
-				// only affect objects with VR interactivity
-				if (m_CurrentObject.GetComponent<VRInteractiveItem> () != null) {
 					Debug.Log ("Entered: " + m_CurrentObject.name);
 					m_CurrentObject.GetComponent<VRInteractiveItem> ().Enter ();				
-				}
-			}	
+				} else {
+					//we're over an object
+					if (Input.GetMouseButtonDown(0) ){
+						m_CurrentObject.GetComponent<VRInteractiveItem> ().Trigger ();
+					}
+				}	
+			
+			}
+
 
 			m_RayCastLine.SetPosition (1, m_Hit.point);
 			m_LastObject = m_CurrentObject;

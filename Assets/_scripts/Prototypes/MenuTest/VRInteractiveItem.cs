@@ -10,9 +10,14 @@ public class VRInteractiveItem : MonoBehaviour {
 	public event Action OnTrigger;           // Called when click input is detected whilst the gaze is over this object.
 
 	protected bool m_IsOver;
+	protected bool m_IsActive = false;
 
 	public bool IsOver{
 		get { return m_IsOver; }
+	}
+
+	public bool IsActive{
+		get { return m_IsActive; }
 	}
 
 	public void Enter(){
@@ -41,6 +46,8 @@ public class VRInteractiveItem : MonoBehaviour {
 
 	public void Trigger()
 	{
+		m_IsActive = !m_IsActive;
+
 		if (OnTrigger != null)
 			OnTrigger();
 	}
