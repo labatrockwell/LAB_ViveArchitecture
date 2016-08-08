@@ -12,6 +12,7 @@ public class menuSelectorTest : MonoBehaviour {
 	private LineRenderer m_RayCastLine;
 	private GameObject m_CurrentObject;
 	private GameObject m_LastObject;
+	private float idleLimit = 2.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -52,16 +53,34 @@ public class menuSelectorTest : MonoBehaviour {
 					if (Input.GetMouseButtonDown(0) ){
 						m_CurrentObject.GetComponent<VRInteractiveItem> ().Trigger ();
 					}
-				}	
-			
+				}				
 			}
-
 
 			m_RayCastLine.SetPosition (1, m_Hit.point);
 			m_LastObject = m_CurrentObject;
 
 		} else {
+//			StartCoroutine (IdleTest());
 			m_RayCastLine.SetPosition (1, Camera.main.transform.position - new Vector3 (0f, 1f, 0f));
+			if (Input.GetMouseButtonDown (0)) {
+				Debug.Log ("Mouse clicked outside of collider");
+				Debug.Log ("Last object: " + m_LastObject.name);
+				if (m_LastObject != null) {
+					if (m_LastObject.GetComponent<VRInteractiveItem> () != null) {
+						Debug.Log ("Turning Off Menus");
+						m_LastObject.GetComponent<VRInteractiveItem> ().Trigger ();
+					}
+				}
+			}
+
 		}	
+	}
+
+	IEnumerator IdleTest(){
+		float timer = 0f;
+		while (timer < idleLimit) {
+			timer += Time.deltaTime;
+			yield return null;
+		}
 	}
 }

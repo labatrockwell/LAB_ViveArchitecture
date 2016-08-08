@@ -54,8 +54,10 @@ public class MenuItem : MonoBehaviour {
 //		Debug.Log ("Triggered delegate Trigger function for: " + gameObject.name);
 		for (int i = 0; i < m_SubMenus.Length; i++) {			
 			if (m_InteractiveItem.IsActive == true) {
+				m_SubMenuActive = true;
 				StartCoroutine (TriggerAnimation (m_SubMenus [i], m_MenuOrigin, m_SubMenuPositions [i], new Vector3(0f,0f,0f), new Vector3(.5f,.5f,.5f), m_InteractiveItem.IsActive));
 			} else {
+				m_SubMenuActive = false;
 				StartCoroutine (TriggerAnimation (m_SubMenus [i], m_SubMenuPositions [i], m_MenuOrigin, new Vector3(.5f,.5f,.5f), new Vector3(0f,0f,0f), m_InteractiveItem.IsActive));			
 			}
 		}

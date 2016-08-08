@@ -10,6 +10,7 @@ public class rotateMenu : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+		transform.RotateAround (transform.position, Vector3.up, Mathf.Sin (Time.time/3) * .125f);
+//		transform.rotate
 	}
 }
