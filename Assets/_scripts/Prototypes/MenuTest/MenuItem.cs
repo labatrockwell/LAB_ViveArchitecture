@@ -8,6 +8,7 @@ public class MenuItem : MonoBehaviour {
 	private bool m_SubMenuActive;
 
 	private GameObject[] m_SubMenus;
+	private GameObject[] m_SubMenuTargetPositions;
 	private Vector3[] m_SubMenuPositions;
 	private Vector3 m_MenuOrigin;
 	private bool m_TriggerAnimationPlaying;
@@ -21,13 +22,24 @@ public class MenuItem : MonoBehaviour {
 		m_InteractiveItem.OnTrigger += HandleTrigger;
 		m_InteractiveItem.OnOut += HandleOut;
 
-		m_SubMenuPositions = retrieveSubmenuPositions ();
+		m_SubMenuPositions = getSubmenuPositions ();
 		m_MenuOrigin = gameObject.transform.position;
-		m_SubMenus = retrieveSubmenuObjects ();
-
+		m_SubMenus = getSubmenuObjects ();
 		m_TriggerAnimationPlaying = false;
 
+		m_SubMenuTargetPositions = new GameObject[m_SubMenus.Length];
 
+		//store SubMenu target positions in an array of empty gameObjects
+		int iterator=0;
+		foreach(GameObject subMenu in m_SubMenus){
+			GameObject tempGameObj = new GameObject ("SubmenuPosition_"+iterator+1);
+			tempGameObj.transform.position = m_SubMenuPositions [iterator];
+			tempGameObj.transform.parent = gameObject.transform; //parent the temp GO to the parent menu
+			m_SubMenuTargetPositions [iterator] = tempGameObj;
+			iterator++;
+		}
+
+		//Hide SubMenus
 		for (int i = 0; i < m_SubMenus.Length; i++) {
 			StartCoroutine (TriggerAnimation (m_SubMenus [i], m_SubMenuPositions [i], m_MenuOrigin, new Vector3(.5f,.5f,.5f), new Vector3(0f,0f,0f), m_InteractiveItem.IsActive));
 		}
@@ -55,10 +67,10 @@ public class MenuItem : MonoBehaviour {
 		for (int i = 0; i < m_SubMenus.Length; i++) {			
 			if (m_InteractiveItem.IsActive == true) {
 				m_SubMenuActive = true;
-				StartCoroutine (TriggerAnimation (m_SubMenus [i], m_MenuOrigin, m_SubMenuPositions [i], new Vector3(0f,0f,0f), new Vector3(.5f,.5f,.5f), m_InteractiveItem.IsActive));
+				StartCoroutine (TriggerAnimation (m_SubMenus [i], m_MenuOrigin, m_SubMenuTargetPositions[i].transform.position, new Vector3(0f,0f,0f), new Vector3(.5f,.5f,.5f), m_InteractiveItem.IsActive));
 			} else {
 				m_SubMenuActive = false;
-				StartCoroutine (TriggerAnimation (m_SubMenus [i], m_SubMenuPositions [i], m_MenuOrigin, new Vector3(.5f,.5f,.5f), new Vector3(0f,0f,0f), m_InteractiveItem.IsActive));			
+				StartCoroutine (TriggerAnimation (m_SubMenus [i], m_SubMenuTargetPositions[i].transform.position, m_MenuOrigin, new Vector3(.5f,.5f,.5f), new Vector3(0f,0f,0f), m_InteractiveItem.IsActive));			
 			}
 		}
 	}
@@ -118,7 +130,7 @@ public class MenuItem : MonoBehaviour {
 		m_TriggerAnimationPlaying = false;
 	}
 
-	private Vector3[] retrieveSubmenuPositions(){
+	private Vector3[] getSubmenuPositions(){
 		Vector3[] positions = new Vector3[gameObject.GetComponentsInChildren<Renderer>().Length-1];
 		int iterator = 0;
 		foreach (Renderer subMenu in gameObject.GetComponentsInChildren<Renderer>() ) {
@@ -131,8 +143,9 @@ public class MenuItem : MonoBehaviour {
 		return positions;		
 	}
 	
-	private GameObject[] retrieveSubmenuObjects(){
+	private GameObject[] getSubmenuObjects(){
 		GameObject[] gameObjects = new GameObject[gameObject.GetComponentsInChildren<Renderer>().Length-1];
+
 		int iterator = 0;
 		foreach (Renderer subMenu in gameObject.GetComponentsInChildren<Renderer>() ) {
 			//exclude the parent
