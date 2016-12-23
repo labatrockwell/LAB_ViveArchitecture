@@ -4,6 +4,7 @@ using System.Collections;
 public class DrawLineManager : MonoBehaviour {
 
 	public GameObject mObj;
+	//public GameObject mLinePrefab ;
 	private MeshLineRenderer currLine;
 	private Vector3 prevPos = new Vector3(0,0,0);
 	private int numClicks = 0;
@@ -20,7 +21,13 @@ public class DrawLineManager : MonoBehaviour {
 	void Update () {
 		if (drawingOn) {
 			if (mObj.GetComponent<DrawTool> ().isSelected) {
+
 				if (mObj.GetComponent<DrawTool> ().clickDown) {
+
+					//GameObject line  = Instantiate(mLinePrefab);
+//					ObjectIdentifier id = line.AddComponent<ObjectIdentifier> ();
+//					id.prefabName = "lineobject";
+					Debug.Log("New Object");
 					GameObject go = new GameObject ();
 					go.AddComponent<MeshFilter> ();
 					go.AddComponent<MeshRenderer> ();
@@ -28,13 +35,17 @@ public class DrawLineManager : MonoBehaviour {
 					currLine = go.AddComponent<MeshLineRenderer> ();
 					go.AddComponent<Interaction> ();
 					currLine.setWidth (.1f);
-					numClicks = 0;
+					//currLine = mObj.GetComponent<MeshLineRenderer> ();
+					//currLine.setWidth (.1f);
 				} else if (mObj.GetComponent<DrawTool> ().clickMove) {
+					Debug.Log("Object Move");
+
 					currLine.AddPoint (mObj.transform.position);
-					float dis = Vector3.Distance (prevPos, mObj.transform.position);
+					float dis = Vector3.Distance (prevPos, mObj.transform.position);	
+					float width = .15f -  dis;
+					width = Mathf.Clamp(width, .1f, 1.0f);
 					prevPos = mObj.transform.position;
-					currLine.setWidth (.2f - (dis / 10));
-					numClicks++;
+					currLine.setWidth (width);
 				}
 			}
 		}

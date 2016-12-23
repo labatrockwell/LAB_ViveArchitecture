@@ -44,7 +44,8 @@ public class DrawTool : MonoBehaviour {
 //		}
 			if (isClicked) {
 				if (!clickDown && !clickMove) {
-					clickDown = true;	
+					clickDown = true;
+				Debug.Log ("CLICKDONW");
 				} else if (clickDown || clickMove) {
 					clickMove = true;
 					clickDown = false;
