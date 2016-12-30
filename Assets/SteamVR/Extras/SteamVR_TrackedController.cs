@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿//======= Copyright (c) Valve Corporation, All rights reserved. ===============
+using UnityEngine;
 using Valve.VR;
 
 public struct ClickedEventArgs
@@ -34,7 +35,7 @@ public class SteamVR_TrackedController : MonoBehaviour
     public event ClickedEventHandler Ungripped;
 
     // Use this for initialization
-    void Start()
+    protected virtual void Start()
     {
         if (this.GetComponent<SteamVR_TrackedObject>() == null)
         {
@@ -127,7 +128,7 @@ public class SteamVR_TrackedController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
 		var system = OpenVR.System;
 		if (system != null && system.GetControllerState(controllerIndex, ref controllerState))
