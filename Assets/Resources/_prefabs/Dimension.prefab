@@ -252,7 +252,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.14509805, g: 0.8705883, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -318,15 +318,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1720321840466766}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 44297b4c2dc7f48868460831951206d0, type: 3}
+  m_Script: {fileID: 11500000, guid: bb446e14114c0f2409d3e1d3c99aa9b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dimPtA: {fileID: 1436960138404520}
-  dimPtB: {fileID: 1036599643457300}
-  dimMaterial: {fileID: 2100000, guid: 9e78a3a8a3bfa46d39c8b1590210daba, type: 2}
+  dimPtA: {fileID: 0}
+  dimPtB: {fileID: 0}
+  dimMaterial: {fileID: 2100000, guid: c9a8fcb69a58db94bbfa99f1b752a759, type: 2}
   vertical: 0
   overrideDim: 0
-  offset: -0.39
+  offset: 0
   dimension: 
 --- !u!120 &120716083467414104
 LineRenderer:
