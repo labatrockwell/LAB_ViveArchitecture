@@ -15,30 +15,6 @@ using UnityEngine.Events;
 public class GameEvent {}
 
 //Some examples: 
-public class ChangeOfTimeEvent : GameEvent
-{
-	public int id{ get; private set;}
-	public ChangeOfTimeEvent(int _id){
-		this.id = _id;
-	}
-}
-
-public class FadeEvent : GameEvent
-{
-	public int id{ get; private set;}
-	public FadeEvent(int _id){
-		this.id = _id;
-	}
-}
-
-public class HumanFade : GameEvent
-{
-	public int id{ get; private set;}
-	public HumanFade(int _id){
-		this.id = _id;
-	}
-}
-
 public class TeleportEvent : GameEvent
 {
 	public int id{ get; private set;}

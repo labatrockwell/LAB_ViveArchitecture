@@ -29,11 +29,9 @@ public class RayCastController : MonoBehaviour {
         Ray mRay = new Ray(transform.position, transform.forward);
         RaycastHit mHit;
 
-        mLineRend.SetPosition(0, transform.position);
-
-        //THE STEAM VR WAY
         if (Physics.Raycast(mRay, out mHit))
         {
+            mLineRend.SetPosition(0, transform.position);
             //Debug.Log("Raycast Hit: " + mHit.transform.gameObject.name);
             mLineRend.SetPosition(1, mHit.point);
             int deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
@@ -42,26 +40,18 @@ public class RayCastController : MonoBehaviour {
 
             if (dimCreated) {
                 mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
-
                 if (deviceIndex != -1) {
-
                     if ( mController.GetTouch(SteamVR_Controller.ButtonMask.Touchpad)) {
                         Vector2 touchPad = mController.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
                         //add or subrtact extenstions based on touchpad y
                         Debug.Log("TouchPad Y: " + touchPad.y);
                         mDim.GetComponent<Dimension>().offset = touchPad.y;
                     }
-
-                    //if (mController.GetPressDown(SteamVR_Controller.ButtonMask.)) {
-
-                    //}
-
                 }
             }
 
             if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
             {
-
                 Debug.Log("Right Trigger Pulled!");
                 if (mHit.collider != null)
                 {
@@ -77,7 +67,6 @@ public class RayCastController : MonoBehaviour {
                         mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
                         dimCreated = false;
                     }
-
                 }
             }
 
