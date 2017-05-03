@@ -48,26 +48,26 @@ public class DimensionCommand : MonoBehaviour {
                 }
             }
 
-            if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
-            {
-                Debug.Log("Right Trigger Pulled!");
-                if (mHit.collider != null)
-                {
-                    if (!dimCreated)
-                    {
-                        //create new dimension pt A
-                        dimCreated = true;
-                        mDim = GameObject.Instantiate(Resources.Load("_prefabs/Dimension") as GameObject);
-                        mDim.GetComponent<Dimension>().dimPtA.transform.position = mHit.point;
-                    }
-                    else
-                    {
-                        mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
-                        dimCreated = false;
-                        commandActive = false;
-                    }
-                }
-            }
+            //if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+            //{
+            //    Debug.Log("Right Trigger Pulled!");
+            //    if (mHit.collider != null)
+            //    {
+            //        if (!dimCreated)
+            //        {
+            //            //create new dimension pt A
+            //            dimCreated = true;
+            //            mDim = GameObject.Instantiate(Resources.Load("_prefabs/Dimension") as GameObject);
+            //            mDim.GetComponent<Dimension>().dimPtA.transform.position = mHit.point;
+            //        }
+            //        else
+            //        {
+            //            mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
+            //            dimCreated = false;
+            //            commandActive = false;
+            //        }
+            //    }
+            //}
         }
     }
 }
