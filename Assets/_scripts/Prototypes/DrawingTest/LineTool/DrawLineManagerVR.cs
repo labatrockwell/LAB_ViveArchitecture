@@ -3,8 +3,11 @@ using System.Collections;
 
 public class DrawLineManagerVR : MonoBehaviour {
 
-    public GameObject labTrackedController;
+    public GameObject controller;
     public GameObject drawTool;
+
+    private SteamVR_TrackedObject trackedObject;
+    private SteamVR_Controller.Device device { get { return SteamVR_Controller.Input((int)trackedObject.index); } }
 
     private GameObject go = null;
     private MeshLineRenderer currLine;
@@ -12,32 +15,42 @@ public class DrawLineManagerVR : MonoBehaviour {
 	private int numClicks = 0;
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
+        trackedObject = controller.GetComponent<SteamVR_TrackedObject>();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (labTrackedController.GetComponent<SteamVR_TrackedController> ().triggerPressed) {
-			if (!go) {
-				go = new GameObject ();
-				go.AddComponent<MeshFilter> ();
-				go.AddComponent<MeshRenderer> ();
-				go.AddComponent<MeshCollider> ();
-				currLine = go.AddComponent<MeshLineRenderer> ();
-				go.AddComponent<Interaction> ();
-				currLine.setWidth (.1f);
-				numClicks = 0;
-			} else {
-				currLine.AddPoint (drawTool.transform.position);
-				float dis = Vector3.Distance (prevPos, drawTool.transform.position);
-				prevPos = drawTool.transform.position;
-				currLine.setWidth (.2f - (dis / 10));
-				numClicks++;
-			}
+
+        if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+        {
+            Debug.Log("Trigger pressed");
+            if (!go)
+            {
+                Debug.Log("Creating go");
+                go = new GameObject();
+                go.AddComponent<MeshFilter>();
+                go.AddComponent<MeshRenderer>();
+                go.AddComponent<MeshCollider>();
+                currLine = go.AddComponent<MeshLineRenderer>();
+                go.AddComponent<Interaction>();
+                currLine.setWidth(.01f);
+                numClicks = 0;
+            }
+            else
+            {
+                Debug.Log("Editing go");
+                Debug.Log(drawTool.transform.position);
+                currLine.AddPoint(drawTool.transform.position);
+                float dis = Vector3.Distance(prevPos, drawTool.transform.position);
+                prevPos = drawTool.transform.position;
+                currLine.setWidth(.2f - (dis / 10));
+                numClicks++;
+            }
         }
         else
         {
             go = null;
         }
-	}
+    }
 }

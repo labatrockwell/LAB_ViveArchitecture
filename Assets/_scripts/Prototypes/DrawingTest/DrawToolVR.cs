@@ -3,8 +3,6 @@ using System.Collections;
 
 public class DrawToolVR : MonoBehaviour {
 
-    public GameObject labTrackedController;
-
 	public bool isClicked = false;
 	public bool clickDown = false;
 	public bool clickMove= false;
