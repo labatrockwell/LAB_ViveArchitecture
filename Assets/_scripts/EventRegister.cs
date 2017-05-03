@@ -17,18 +17,18 @@ public class EventRegister : MonoBehaviour {
 
 	void OnEnable()
 	{
-		EventManagerTypeSafe.instance.AddListener<ChangeOfTimeEvent> (OnChangeTime);
+		//EventManagerTypeSafe.instance.AddListener<ChangeOfTimeEvent> (OnChangeTime);
 	}
 
 	void OnDisable()
 	{
 		//When the object is disabled, tell the Event Manager to remove it to the Event Dictionary
-		EventManagerTypeSafe.instance.RemoveListener<ChangeOfTimeEvent> (OnChangeTime);
+		//EventManagerTypeSafe.instance.RemoveListener<ChangeOfTimeEvent> (OnChangeTime);
 	}
 
-	void OnChangeTime(ChangeOfTimeEvent _e){
-		print("Change of time event!");
-		//Do stuff to the audio emitter
-	}
+	//void OnChangeTime(ChangeOfTimeEvent _e){
+	//	print("Change of time event!");
+	//	//Do stuff to the audio emitter
+	//}
 
 }

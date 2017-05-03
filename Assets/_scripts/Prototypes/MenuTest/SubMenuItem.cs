@@ -7,6 +7,8 @@ public class SubMenuItem : MonoBehaviour {
 	private bool m_EnterAnimationRunning;
 	private GameObject m_ParentMenu;
 
+    public string command;
+
 	void OnEnable(){
 
 		m_InteractiveItem = gameObject.GetComponent<VRInteractiveItem> ();
@@ -34,9 +36,10 @@ public class SubMenuItem : MonoBehaviour {
 	}
 
 	void HandleTrigger(){
-//		Debug.Log ("Triggered delegate Trigger function for: " + gameObject.name);
-//		Debug.Log ("This object is a child of : " + m_ParentMenu);
-		//CALL SOME FUNCTION - eventManager, execute command with ID or string Name
+        //		Debug.Log ("Triggered delegate Trigger function for: " + gameObject.name);
+        //		Debug.Log ("This object is a child of : " + m_ParentMenu);
+        //CALL SOME FUNCTION - eventManager, execute command with ID or string Name
+        EventManagerTypeSafe.instance.TriggerEvent(new CommandEvent(command));        
 		//HIDE ALL MENUS
 		m_ParentMenu.GetComponent<VRInteractiveItem>().Trigger();
 	}
