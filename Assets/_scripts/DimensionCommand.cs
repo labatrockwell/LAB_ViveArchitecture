@@ -20,8 +20,9 @@ public class DimensionCommand : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        //if (commandActive) {
-
+        if (commandActive)
+        {
+            //the ray from the right controller
             Ray mRay = new Ray(transform.position, transform.forward);
             RaycastHit mHit;
 
@@ -32,41 +33,41 @@ public class DimensionCommand : MonoBehaviour {
                 mController = SteamVR_Controller.Input(deviceIndex);
 
                 if (dimCreated)
+                {
+                    mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
+                    if (deviceIndex != -1)
                     {
-                        mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
-                        if (deviceIndex != -1)
+                        if (mController.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
                         {
-                            if (mController.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
-                            {
-                                Vector2 touchPad = mController.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
-                                //add or subrtact extenstions based on touchpad y
-                                Debug.Log("TouchPad Y: " + touchPad.y);
-                                mDim.GetComponent<Dimension>().offset = touchPad.y;
-                            }
-                        }
-                    }
-
-                    if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
-                    {
-                        Debug.Log("Right Trigger Pulled!");
-                        if (mHit.collider != null)
-                        {
-                            if (!dimCreated)
-                            {
-                                //create new dimension pt A
-                                dimCreated = true;
-                                mDim = GameObject.Instantiate(Resources.Load("_prefabs/Dimension") as GameObject);
-                                mDim.GetComponent<Dimension>().dimPtA.transform.position = mHit.point;
-                            }
-                            else
-                            {
-                                mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
-                                dimCreated = false;
-                                commandActive = false;
-                            }
+                            Vector2 touchPad = mController.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
+                            //add or subrtact extenstions based on touchpad y
+                            Debug.Log("TouchPad Y: " + touchPad.y);
+                            mDim.GetComponent<Dimension>().offset = touchPad.y;
                         }
                     }
                 }
-        //}
+            }
+
+            if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+            {
+                Debug.Log("Right Trigger Pulled!");
+                if (mHit.collider != null)
+                {
+                    if (!dimCreated)
+                    {
+                        //create new dimension pt A
+                        dimCreated = true;
+                        mDim = GameObject.Instantiate(Resources.Load("_prefabs/Dimension") as GameObject);
+                        mDim.GetComponent<Dimension>().dimPtA.transform.position = mHit.point;
+                    }
+                    else
+                    {
+                        mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
+                        dimCreated = false;
+                        commandActive = false;
+                    }
+                }
+            }
+        }
     }
 }

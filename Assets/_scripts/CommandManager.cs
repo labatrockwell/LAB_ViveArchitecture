@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CommandManager : MonoBehaviour {
 
+    private string activeCommand;
+
 	// Use this for initialization
 	void Start () {
 		
