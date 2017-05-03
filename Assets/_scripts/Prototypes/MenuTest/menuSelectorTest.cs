@@ -28,7 +28,7 @@ public class menuSelectorTest : MonoBehaviour {
 
 	void Update () {
 
-		Ray m_Ray = Camera.main.ScreenPointToRay (Input.mousePosition);
+		Ray m_Ray = Camera.main.ScreenPointToRay (Input.mousePosition); //CHANGE TO RAY CAST FROM RIGHT CONTROLLER
 		RaycastHit m_Hit;
 
 		if (Physics.Raycast (m_Ray, out m_Hit)) {		
@@ -50,7 +50,7 @@ public class menuSelectorTest : MonoBehaviour {
 					m_CurrentObject.GetComponent<VRInteractiveItem> ().Enter ();				
 				} else {
 					//we're over an object
-					if (Input.GetMouseButtonDown(0) ){
+					if (Input.GetMouseButtonDown(0) ){ //CHANGE TO RIGHT TRIGGER
 						m_CurrentObject.GetComponent<VRInteractiveItem> ().Trigger ();
 					}
 				}				

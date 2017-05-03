@@ -15,11 +15,11 @@ using UnityEngine.Events;
 public class GameEvent {}
 
 //Some examples: 
-public class TeleportEvent : GameEvent
+public class CommandEvent : GameEvent
 {
-	public int id{ get; private set;}
-	public TeleportEvent(int _id){
-		this.id = _id;
+	public string command{ get; private set;}
+	public CommandEvent(string _command){
+		this.command = _command;
 	}
 }
 
