@@ -8,6 +8,7 @@ public class DimensionCommand : MonoBehaviour {
     private bool dimCreated;
     private GameObject mDim;
     public bool commandActive;
+    public GameObject rightController;
 
 	// Use this for initialization
 	void Start () {
@@ -22,15 +23,19 @@ public class DimensionCommand : MonoBehaviour {
 
         if (commandActive)
         {
+            //Debug.Log("Dimension Command is active! From DimensionCommand.cs");
             //the ray from the right controller
-            Ray mRay = new Ray(transform.position, transform.forward);
-            RaycastHit mHit;
+            Ray mRay = rightController.GetComponent<RayCastController>().mRay;
+            RaycastHit mHit = rightController.GetComponent<RayCastController>().mHit;
+            bool raycastHit = rightController.GetComponent<RayCastController>().mRayCastHit;
+
+            int deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+            mController = SteamVR_Controller.Input(deviceIndex);
 
             //TODO add layermask to ignore VR interface elements
-            if (Physics.Raycast(mRay, out mHit))
+            if (raycastHit)
             {
-                int deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-                mController = SteamVR_Controller.Input(deviceIndex);
+                Debug.Log("We got a hit! From DimensionCommand.cs");
 
                 if (dimCreated)
                 {
@@ -48,26 +53,26 @@ public class DimensionCommand : MonoBehaviour {
                 }
             }
 
-            //if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
-            //{
-            //    Debug.Log("Right Trigger Pulled!");
-            //    if (mHit.collider != null)
-            //    {
-            //        if (!dimCreated)
-            //        {
-            //            //create new dimension pt A
-            //            dimCreated = true;
-            //            mDim = GameObject.Instantiate(Resources.Load("_prefabs/Dimension") as GameObject);
-            //            mDim.GetComponent<Dimension>().dimPtA.transform.position = mHit.point;
-            //        }
-            //        else
-            //        {
-            //            mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
-            //            dimCreated = false;
-            //            commandActive = false;
-            //        }
-            //    }
-            //}
+            if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+            {
+                Debug.Log("Right Trigger Pulled!");
+                if (mHit.collider != null)
+                {
+                    if (!dimCreated)
+                    {
+                        //create new dimension pt A
+                        dimCreated = true;
+                        mDim = GameObject.Instantiate(Resources.Load("_prefabs/Dimension") as GameObject);
+                        mDim.GetComponent<Dimension>().dimPtA.transform.position = mHit.point;
+                    }
+                    else
+                    {
+                        mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
+                        dimCreated = false;
+                        commandActive = false;
+                    }
+                }
+            }
         }
     }
 }

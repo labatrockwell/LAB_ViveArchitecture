@@ -26,7 +26,7 @@ public class Interaction : MonoBehaviour {
 		RaycastHit hit; 
 //		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); 
 		if (Physics.Raycast (ray, out hit)) {
-			Debug.Log (hit.transform.gameObject);
+			//Debug.Log (hit.transform.gameObject);
 			if (hit.transform.gameObject == gameObject) {
 				isClicked = true;			
 			}

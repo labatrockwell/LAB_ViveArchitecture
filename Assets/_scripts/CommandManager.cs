@@ -36,5 +36,9 @@ public class CommandManager : MonoBehaviour {
         if (command == "dimensionStart") {
             GetComponent<DimensionCommand>().commandActive = true;
         }
+
+        if (command == "drawStart") {
+            GetComponent<DrawCommand>().commandActive = true;
+        }
     }
 }

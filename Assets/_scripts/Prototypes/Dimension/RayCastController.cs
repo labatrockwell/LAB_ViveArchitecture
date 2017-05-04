@@ -9,17 +9,20 @@ public class RayCastController : MonoBehaviour {
     private GameObject mDim = null;
     private LineRenderer mLineRend = null;
     public bool dimsActive;
-
     private GameObject m_CurrentObject;
     private GameObject m_LastObject;
+
+    public Ray mRay;
+    public RaycastHit mHit;
+    public bool mRayCastHit;
 
     // Use this for initialization
     void Start () {
         //mRay = new Ray(transform.position, transform.forward);
-        Debug.Log(Input.GetJoystickNames() );
-        foreach (string name in Input.GetJoystickNames()) {
-            Debug.Log(name);
-        }
+        //Debug.Log(Input.GetJoystickNames() );
+        //foreach (string name in Input.GetJoystickNames()) {
+        //    Debug.Log(name);
+        //}
         dimsActive = false;        
         //preview the rayCast
         mLineRend = gameObject.AddComponent<LineRenderer>();
@@ -30,11 +33,11 @@ public class RayCastController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        Ray mRay = new Ray(transform.position, transform.forward);
-        RaycastHit mHit;
+        mRay = new Ray(transform.position, transform.forward);
 
         if (Physics.Raycast(mRay, out mHit))
         {
+            mRayCastHit = true;
             mLineRend.SetPosition(0, transform.position);
             //Debug.Log("Raycast Hit: " + mHit.transform.gameObject.name);
             mLineRend.SetPosition(1, mHit.point);
@@ -54,18 +57,18 @@ public class RayCastController : MonoBehaviour {
                     {
                         if (m_LastObject.GetComponent<VRInteractiveItem>() != null)
                         {
-                            Debug.Log("Exited: " + m_LastObject.name);
+                            //Debug.Log("Exited: " + m_LastObject.name);
                             m_LastObject.GetComponent<VRInteractiveItem>().Out();
                         }
                     }
 
-                    Debug.Log("Entered: " + m_CurrentObject.name);
+                    //Debug.Log("Entered: " + m_CurrentObject.name);
                     m_CurrentObject.GetComponent<VRInteractiveItem>().Enter();
                 }
                 else
                 {
                     //we're over an object
-                    if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+                    if (deviceIndex != -1 && mController.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
                     {
                         m_CurrentObject.GetComponent<VRInteractiveItem>().Trigger();
                     }
@@ -81,7 +84,7 @@ public class RayCastController : MonoBehaviour {
                         if ( mController.GetTouch(SteamVR_Controller.ButtonMask.Touchpad)) {
                             Vector2 touchPad = mController.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
                             //add or subrtact extenstions based on touchpad y
-                            Debug.Log("TouchPad Y: " + touchPad.y);
+                            //Debug.Log("TouchPad Y: " + touchPad.y);
                             mDim.GetComponent<Dimension>().offset = touchPad.y;
                         }
                     }
@@ -89,7 +92,7 @@ public class RayCastController : MonoBehaviour {
 
                 if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
                 {
-                    Debug.Log("Right Trigger Pulled!");
+                    //Debug.Log("Right Trigger Pulled!");
                     if (mHit.collider != null)
                     {
                         if (!dimCreated)
@@ -111,17 +114,8 @@ public class RayCastController : MonoBehaviour {
         else {
             Vector3 endPt = transform.forward * Camera.main.farClipPlane;
             mLineRend.SetPosition(1, endPt);
-        }                   
-
-        Debug.DrawRay(transform.position, transform.forward, Color.red);
-
-       
-        //LineRenderer mLR = gameObject.AddComponent<LineRenderer>();
-        //mLR.positionCount = 2;
-        //mLR.SetPosition(0, transform.position);
-
-        //RaycastHit hit;
-        //Physics.Raycast(transform.position, transform.forward, hit);            
+            mRayCastHit = false;
+        }                          
 
 	}
 }
