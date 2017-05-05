@@ -69,13 +69,13 @@ public class Interaction : MonoBehaviour {
 //		Debug.Log (parent);
 		material = gameObject.GetComponent<Renderer>();
 
-		if (isSelected) {
-			material.material.color = new Color (1f, 0, 0);
+		//if (isSelected) {
+		//	material.material.color = new Color (1f, 0, 0);
 
-		} else {
-			material.material.color = new Color (0, 1f, 0);
+		//} else {
+		//	material.material.color = new Color (0, 1f, 0);
 
-		}
+		//}
 
 	}
 }

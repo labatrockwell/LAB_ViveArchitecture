@@ -39,7 +39,7 @@ public class SubMenuItem : MonoBehaviour {
         //		Debug.Log ("Triggered delegate Trigger function for: " + gameObject.name);
         //		Debug.Log ("This object is a child of : " + m_ParentMenu);
         //CALL SOME FUNCTION - eventManager, execute command with ID or string Name
-        EventManagerTypeSafe.instance.TriggerEvent(new CommandEvent(command));        
+        EventManagerTypeSafe.instance.TriggerEvent(new CommandStartEvent(command));        
 		//HIDE ALL MENUS
 		m_ParentMenu.GetComponent<VRInteractiveItem>().Trigger();
 	}

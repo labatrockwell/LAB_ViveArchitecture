@@ -48,6 +48,7 @@ public class Teleporter : MonoBehaviour {
 			teleportee.transform.position = target.transform.position + Vector3.up;
 		}
 
+        //this should be the controller
 		Vector3 origin = originObject.transform.position;
 		Vector3 direction = originObject.transform.forward;
 

@@ -2,26 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DimensionCommand : MonoBehaviour {
+public class DimensionCommand : Command {
 
     SteamVR_Controller.Device mController;
     private bool dimCreated;
     private GameObject mDim;
-    public bool commandActive;
+    //public bool commandActive;
     public GameObject rightController;
+
+    LineRenderer dimLineRenderer;
 
 	// Use this for initialization
 	void Start () {
-
         commandActive = false;
         dimCreated = false;
         mDim = null;
-	}
+
+        dimLineRenderer = gameObject.AddComponent<LineRenderer>();
+        dimLineRenderer.startWidth= 0.025f;
+        dimLineRenderer.endWidth = 0.025f;
+        Material lineMat = new Material(Shader.Find("Unlit / Color"));
+        lineMat.color = Color.cyan;
+
+        dimLineRenderer.enabled = false;
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (commandActive)
+        if (commandActive && !paused)
         {
             //Debug.Log("Dimension Command is active! From DimensionCommand.cs");
             //the ray from the right controller
@@ -32,10 +42,15 @@ public class DimensionCommand : MonoBehaviour {
             int deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
             mController = SteamVR_Controller.Input(deviceIndex);
 
+            dimLineRenderer.enabled = true;
+            dimLineRenderer.SetPosition(0, rightController.transform.position);
+
             //TODO add layermask to ignore VR interface elements
             if (raycastHit)
             {
-                Debug.Log("We got a hit! From DimensionCommand.cs");
+                //Debug.Log("We got a hit! From DimensionCommand.cs");
+
+                dimLineRenderer.SetPosition(1, mHit.point);
 
                 if (dimCreated)
                 {
@@ -51,6 +66,10 @@ public class DimensionCommand : MonoBehaviour {
                         }
                     }
                 }
+            }
+            else {
+                Vector3 endPt = rightController.transform.forward * Camera.main.farClipPlane;
+                dimLineRenderer.SetPosition(1, endPt);
             }
 
             if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
@@ -69,10 +88,13 @@ public class DimensionCommand : MonoBehaviour {
                     {
                         mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
                         dimCreated = false;
-                        commandActive = false;
+                        //commandActive = false;
                     }
                 }
             }
+        }
+        else {
+            dimLineRenderer.enabled = false;
         }
     }
 }

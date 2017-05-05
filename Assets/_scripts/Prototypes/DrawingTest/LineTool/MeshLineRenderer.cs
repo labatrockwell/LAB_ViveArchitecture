@@ -1,34 +1,23 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-/*
-class Point {
-	public Vector3 p;
-	public Point next;
-} 
-*/
 
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(MeshFilter))]
 public class MeshLineRenderer : MonoBehaviour {
 
 	public Material lmat;
-
 	private Mesh ml;
-
 	public Shader mShader;
-
 	private Vector3 s;
-
 	private float lineSize = .1f;
-
 	private bool firstQuad = true;
 
 	void Start() {
 		ml = GetComponent<MeshFilter>().mesh;
-		lmat = new Material (Shader.Find("Standard"));
+		lmat = new Material ( Shader.Find("Unlit/Color") );
+        lmat.color = Color.red;
 
-		lmat.color = new Color (.2f, .5f, .4f);
 		GetComponent<MeshRenderer>().material = lmat;
 
 	}

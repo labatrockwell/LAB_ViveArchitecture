@@ -15,12 +15,37 @@ using UnityEngine.Events;
 public class GameEvent {}
 
 //Some examples: 
-public class CommandEvent : GameEvent
+public class CommandStartEvent : GameEvent
 {
 	public string command{ get; private set;}
-	public CommandEvent(string _command){
+	public CommandStartEvent(string _command){
 		this.command = _command;
 	}
+}
+
+public class CommandEndEvent : GameEvent
+{
+    public string command { get; private set; }
+    public CommandEndEvent(string _command)
+    {
+        this.command = _command;
+    }
+}
+
+public class CommandInterruptEvent : GameEvent
+{
+    public CommandInterruptEvent()
+    {
+        //this.command = _command;
+    }
+}
+
+public class CommandResumeEvent : GameEvent
+{
+    public CommandResumeEvent()
+    {
+        //this.command = _command;
+    }
 }
 
 //===================================================================
