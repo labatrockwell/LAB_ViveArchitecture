@@ -6,14 +6,18 @@ using System.Collections.Generic;
 [RequireComponent(typeof(MeshFilter))]
 public class MeshLineRenderer : MonoBehaviour {
 
+	public ListWrapper mPoints;
+
 	public Material lmat;
-	private Mesh ml;
+
+	public Mesh ml;
 	public Shader mShader;
 	private Vector3 s;
 	private float lineSize = .1f;
 	private bool firstQuad = true;
 
-	void Start() {
+	void Awake() {
+		mPoints = new ListWrapper ();
 		ml = GetComponent<MeshFilter>().mesh;
 		lmat = new Material ( Shader.Find("Unlit/Color") );
         lmat.color = Color.red;
@@ -28,11 +32,15 @@ public class MeshLineRenderer : MonoBehaviour {
 
 	public void AddPoint(Vector3 point) {
 		if(s != Vector3.zero) {
+			//Mesh _ml = GetComponent<MeshFilter>().mesh;
+
 			AddLine(ml, MakeQuad(s, point, lineSize, firstQuad));
 			firstQuad = false;
+			mPoints.Add (point);
 		}
-
+		//GetComponent<MeshFilter> ().mesh = ml;
 		s = point;
+
 	}
 
 	Vector3[] MakeQuad(Vector3 s, Vector3 e, float w, bool all) {
@@ -133,6 +141,20 @@ public class MeshLineRenderer : MonoBehaviour {
 		m.RecalculateNormals();
 		gameObject.GetComponent<MeshCollider> ().sharedMesh = null;
 		gameObject.GetComponent<MeshCollider> ().sharedMesh = m;
+//		GameObject dum = GameObject.CreatePrimitive(PrimitiveType.Plane);
+//		dum.transform = 
+//		GetComponent<MeshFilter>() = dum.GetComponent<MeshFilter>();
+//		GetComponent<MeshFilter> ().mesh.vertices = vs;
+//		GetComponent<MeshFilter> ().mesh.uv = uvs;
+//		GetComponent<MeshFilter> ().mesh.triangles = ts;
+//		GetComponent<MeshFilter> ().mesh.RecalculateBounds();
+//		GetComponent<MeshFilter> ().mesh.RecalculateNormals();
+//			
+
+//
+//		Debug.Log(">>>>>>>>>>>>>>>>>>>>>>>>>: " + m.vertexCount);
+//		Debug.Log(">>>>>>>>>>>>>>>>>>>>>>>>>: " + GetComponent<MeshFilter>().mesh.vertexCount);
+
 	}
 
 	Vector3[] resizeVertices(Vector3[] ovs, int ns) {
