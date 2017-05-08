@@ -33,60 +33,62 @@ public class DrawCommand : Command {
 	// Update is called once per frame
 	void Update () {
 
-        if (commandActive && !paused) {
-            //Debug.Log("DrawCommandActive");
-            Vector3 extension;
-
-            if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
-            {
-
-                Debug.Log("Trigger pressed");
-                if (!go)
+        if (commandActive) {
+            if (!paused) {
+                //Debug.Log("DrawCommandActive");
+                Vector3 extension;
+                if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
                 {
-                    Debug.Log("Creating go");
-                    go = new GameObject();
-                    go.AddComponent<MeshFilter>();
-                    go.AddComponent<MeshRenderer>();
-                    go.AddComponent<MeshCollider>();
-                    currLine = go.AddComponent<MeshLineRenderer>();
-                    go.AddComponent<Interaction>();
-                    float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
-                    //Debug.Log("Width X: " + width);
-                    width = width.Remap(0.15f, 1.0f, 0.001f, 0.025f);
-                    currLine.setWidth(width);
-                    numClicks = 0;
-                }
-                else
-                {
-                    Debug.Log("Editing go");
-                    Debug.Log(drawTool.transform.position);
 
-                    if (device.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                    Debug.Log("Trigger pressed");
+                    if (!go)
                     {
-                        Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
-                        extensionFactor = (touchPad.y - prevTouchpad);
-                        prevTouchpad = touchPad.y;
-                        extension = drawTool.transform.forward * extensionFactor;
+                        Debug.Log("Creating go");
+                        go = new GameObject();
+                        go.AddComponent<MeshFilter>();
+                        go.AddComponent<MeshRenderer>();
+                        go.AddComponent<MeshCollider>();
+                        currLine = go.AddComponent<MeshLineRenderer>();
+                        go.AddComponent<Interaction>();
+                        float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
+                        //Debug.Log("Width X: " + width);
+                        width = width.Remap(0.15f, 1.0f, 0.001f, 0.025f);
+                        currLine.setWidth(width);
+                        numClicks = 0;
                     }
-                    else {
-                        extensionFactor = 0.0f;
-                        extension = drawTool.transform.forward * extensionFactor;
+                    else
+                    {
+                        Debug.Log("Editing go");
+                        Debug.Log(drawTool.transform.position);
+
+                        if (device.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                        {
+                            Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
+                            extensionFactor = (touchPad.y - prevTouchpad);
+                            prevTouchpad = touchPad.y;
+                            extension = drawTool.transform.forward * extensionFactor;
+                        }
+                        else {
+                            extensionFactor = 0.0f;
+                            extension = drawTool.transform.forward * extensionFactor;
+                        }
+
+                        currLine.AddPoint(drawTool.transform.position);
+
+                        float dis = Vector3.Distance(prevPos, drawTool.transform.position);
+                        prevPos = drawTool.transform.position * extensionFactor;
+                        drawTool.transform.position += extension;
+
+                        //pressure of the trigger pull
+                        float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
+                        //Debug.Log("Width X: " + width);
+                        width = width.Remap(0.15f, 1.0f, 0.001f, 0.1f);
+                        currLine.setWidth(width / 2);                    
+                        numClicks++;
+
+                        prevExtensionFactor = extensionFactor;
                     }
 
-                    currLine.AddPoint(drawTool.transform.position);
-
-                    float dis = Vector3.Distance(prevPos, drawTool.transform.position);
-                    prevPos = drawTool.transform.position * extensionFactor;
-                    drawTool.transform.position += extension;
-
-                    //pressure of the trigger pull
-                    float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
-                    //Debug.Log("Width X: " + width);
-                    width = width.Remap(0.15f, 1.0f, 0.001f, 0.1f);
-                    currLine.setWidth(width / 2);                    
-                    numClicks++;
-
-                    prevExtensionFactor = extensionFactor;
                 }
             }
             else
@@ -98,9 +100,6 @@ public class DrawCommand : Command {
                     drawTool.transform.localPosition = originalPosition;
                 }
             }
-
         }
-        
-
     }
 }
