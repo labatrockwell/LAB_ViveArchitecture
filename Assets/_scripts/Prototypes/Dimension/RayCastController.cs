@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class RayCastController : MonoBehaviour {
 
+    private SteamVR_TrackedObject trackedObject;
+    private SteamVR_Controller.Device device { get { return SteamVR_Controller.Input((int)trackedObject.index); } }
+
     public GameObject cmdMgr;
     private CommandManager commandManager;
 
@@ -18,6 +21,8 @@ public class RayCastController : MonoBehaviour {
     private GameObject m_CurrentObject;
     private GameObject m_LastObject;
 
+    private int deviceIndex;
+
     // Use this for initialization
     void Awake () {
         dimsActive = false;        
@@ -25,6 +30,11 @@ public class RayCastController : MonoBehaviour {
         mLineRend.startWidth = 0.025f;
         mLineRend.endWidth = 0.0f;
         commandManager = cmdMgr.GetComponent<CommandManager>();
+        trackedObject = GetComponent<SteamVR_TrackedObject>();
+    }
+
+    void Start() {
+        //deviceIndex = SteamVR_Controller.GetDeviceIndex(device);
     }
 	
 	// Update is called once per frame
@@ -32,30 +42,30 @@ public class RayCastController : MonoBehaviour {
         mRay = new Ray(transform.position, transform.forward);
         mLineRend.SetPosition(0, transform.position);
 
+        //if a command isn't active, show the line renderer
+        //TODO: create an event listener for commandActive from the CommandManager
+        if (commandManager.isCommandActive)
+        {
+            mLineRend.enabled = false;
+        }
+        else
+        {
+            mLineRend.enabled = true;
+        }
+
         if (Physics.Raycast(mRay, out mHit))
         {
             mRayCastHit = true;
             mLineRend.SetPosition(1, mHit.point);
-            int deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+            
             SteamVR_Controller.Device mController = SteamVR_Controller.Input(deviceIndex);
             m_CurrentObject = mHit.transform.gameObject;
-
-            //if a command isn't active, show the line renderer
-            //TODO: create an event listener for commandActive from the CommandManager
-            if (commandManager.isCommandActive)
-            {
-                mLineRend.enabled = false;
-            }
-            else
-            {
-                mLineRend.enabled = true;
-            }
 
             //Interact with Menu Items
             if (m_CurrentObject.GetComponent<VRInteractiveItem>() != null)
             {
                 //show the line renderer if we're interacting with a menu item
-                mLineRend.enabled = true;                
+                mLineRend.enabled = true;
 
                 //if the selection has changed
                 if (m_CurrentObject != m_LastObject)
@@ -71,20 +81,24 @@ public class RayCastController : MonoBehaviour {
                         }
                     }
                     //Debug.Log("Entered: " + m_CurrentObject.name);
-                    
                     EventManagerTypeSafe.instance.TriggerEvent(new CommandInterruptEvent());
                     m_CurrentObject.GetComponent<VRInteractiveItem>().Enter();
                 }
                 else
                 {
                     //we're over an object
-                    if (deviceIndex != -1 && mController.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+                    if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
                     {
                         m_CurrentObject.GetComponent<VRInteractiveItem>().Trigger();
                     }
                 }
 
                 m_LastObject = m_CurrentObject;
+            }
+            else {
+                Debug.Log("Not interacting with a menu item");
+                //call this only once we leave a menu item
+                EventManagerTypeSafe.instance.TriggerEvent(new CommandResumeEvent());
             }
         }
         else {

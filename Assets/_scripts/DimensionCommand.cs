@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class DimensionCommand : Command {
 
-    SteamVR_Controller.Device mController;
     private bool dimCreated;
     private GameObject mDim;
-    //public bool commandActive;
     public GameObject rightController;
+    private LineRenderer dimLineRenderer;
 
-    LineRenderer dimLineRenderer;
+    private SteamVR_TrackedObject trackedObject;
+    private SteamVR_Controller.Device mController { get { return SteamVR_Controller.Input((int)trackedObject.index); } }
 
 	// Use this for initialization
 	void Start () {
@@ -18,10 +18,12 @@ public class DimensionCommand : Command {
         dimCreated = false;
         mDim = null;
 
+        trackedObject = rightController.GetComponent<SteamVR_TrackedObject>();
+
         dimLineRenderer = gameObject.AddComponent<LineRenderer>();
         dimLineRenderer.startWidth= 0.025f;
         dimLineRenderer.endWidth = 0.025f;
-        Material lineMat = new Material(Shader.Find("Unlit / Color"));
+        Material lineMat = new Material(Shader.Find("Unlit/Color"));
         lineMat.color = Color.cyan;
 
         dimLineRenderer.enabled = false;
@@ -31,6 +33,10 @@ public class DimensionCommand : Command {
 	// Update is called once per frame
 	void Update () {
 
+        if (!trackedObject) {
+            trackedObject = rightController.GetComponent<SteamVR_TrackedObject>();
+        }
+
         if (commandActive && !paused)
         {
             //Debug.Log("Dimension Command is active! From DimensionCommand.cs");
@@ -39,8 +45,9 @@ public class DimensionCommand : Command {
             RaycastHit mHit = rightController.GetComponent<RayCastController>().mHit;
             bool raycastHit = rightController.GetComponent<RayCastController>().mRayCastHit;
 
-            int deviceIndex = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-            mController = SteamVR_Controller.Input(deviceIndex);
+            //int deviceIndex = SteamVR_Controller.GetDeviceIndex()
+            //int deviceIndex = SteamVR_Controller.GetDeviceIndex(mController);
+            //mController = SteamVR_Controller.Input(deviceIndex);
 
             dimLineRenderer.enabled = true;
             dimLineRenderer.SetPosition(0, rightController.transform.position);
@@ -55,8 +62,8 @@ public class DimensionCommand : Command {
                 if (dimCreated)
                 {
                     mDim.GetComponent<Dimension>().dimPtB.transform.position = mHit.point;
-                    if (deviceIndex != -1)
-                    {
+                    //if (deviceIndex != -1)
+                    //{
                         if (mController.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
                         {
                             Vector2 touchPad = mController.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
@@ -64,7 +71,7 @@ public class DimensionCommand : Command {
                             Debug.Log("TouchPad Y: " + touchPad.y);
                             mDim.GetComponent<Dimension>().offset = touchPad.y;
                         }
-                    }
+                    //}
                 }
             }
             else {
@@ -72,7 +79,8 @@ public class DimensionCommand : Command {
                 dimLineRenderer.SetPosition(1, endPt);
             }
 
-            if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+            //if (deviceIndex != -1 && mController.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+            if( mController.GetPressUp(SteamVR_Controller.ButtonMask.Trigger) )
             {
                 Debug.Log("Right Trigger Pulled!");
                 if (mHit.collider != null)

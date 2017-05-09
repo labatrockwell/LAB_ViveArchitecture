@@ -8,6 +8,8 @@ public class TeleportCommand : Command {
 	public GameObject originObject;
 	private Color color = new Color(0f,164f,255f,0.5f);
 
+    private float prevTouchPos;
+
 	private GameObject line;
 	private LineRenderer lineRenderer;
 	private GameObject target;
@@ -38,7 +40,7 @@ public class TeleportCommand : Command {
 		target = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 		Destroy (target.GetComponent<SphereCollider> ());
 		target.transform.position = Vector3.zero;
-		target.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+		target.transform.localScale = new Vector3 (0.125f, 0.125f, 0.125f);
 		target.GetComponent<Renderer>().material.color = color;
 
         trackedObject = originObject.GetComponent<SteamVR_TrackedObject>();
@@ -46,12 +48,15 @@ public class TeleportCommand : Command {
         line.GetComponent<LineRenderer>().enabled = false;
         target.GetComponent<MeshRenderer>().enabled = false;
 
+        prevTouchPos = 0.0f;
+
     }
 	
 	// Update is called once per frame
 	void Update () {
 
-        if (commandActive && !paused) {
+        if (commandActive && !paused)
+        {
             // JUMP!
 
             line.GetComponent<LineRenderer>().enabled = true;
@@ -60,45 +65,60 @@ public class TeleportCommand : Command {
             //if right trigger is pulled
             if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
             {
-			    teleportee.transform.position = target.transform.position;
+                teleportee.transform.position = target.transform.position;
                 //commandActive = false;
                 line.GetComponent<LineRenderer>().enabled = false;
                 target.GetComponent<MeshRenderer>().enabled = false;
-		    }
+                //recenter VR
+                UnityEngine.VR.InputTracking.Recenter();
+            }
+
+            if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
+            {
+                float touchPos = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad).y;
+                float extension = (touchPos - prevTouchPos)/5.0f;
+                velocityMagnitude += extension;
+                prevTouchPos = touchPos;
+            }
 
             //this should be the controller
-		    Vector3 origin = originObject.transform.position;
-		    Vector3 direction = originObject.transform.forward;
+            Vector3 origin = originObject.transform.position;
+            Vector3 direction = originObject.transform.forward;
 
-		    // draw line
-		    line.transform.position = origin;
+            // draw line
+            line.transform.position = origin;
 
-		    trajectoryPoints.Clear ();
-		    lineRenderer.SetVertexCount(numberOfPoints);
+            trajectoryPoints.Clear();
+            lineRenderer.SetVertexCount(numberOfPoints);
 
-		    int i = 0;
-		    bool found = false;
-		    Vector3 dLast = Vector3.zero;
-		    for (i = 0; i < numberOfPoints && !found; i++) {
+            int i = 0;
+            bool found = false;
+            Vector3 dLast = Vector3.zero;
+            for (i = 0; i < numberOfPoints && !found; i++)
+            {
 
-			    Vector3 d = kinematic (i * scale, origin, direction);
-			    trajectoryPoints.Add ( d );
-			    lineRenderer.SetPosition( i, d );
+                Vector3 d = kinematic(i * scale, origin, direction);
+                trajectoryPoints.Add(d);
+                lineRenderer.SetPosition(i, d);
 
-			    if ( i>0 && !found) {
-				    Vector3 r = d - dLast;
-				    RaycastHit hitInfo;
-				    Ray ray = new Ray (dLast, d - dLast);
-				    if ( Physics.Raycast (ray, out hitInfo, (d - dLast).magnitude) ) {
-					    target.transform.position = hitInfo.point;
-					    found = true;
-				    }
-			    }
+                if (i > 0 && !found)
+                {
+                    Vector3 r = d - dLast;
+                    RaycastHit hitInfo;
+                    Ray ray = new Ray(dLast, d - dLast);
+                    if (Physics.Raycast(ray, out hitInfo, (d - dLast).magnitude))
+                    {
+                        target.transform.position = hitInfo.point;
+                        found = true;
+                    }
+                }
 
-			    dLast = d;
-
-		    }
-		    lineRenderer.SetVertexCount(i);
+                dLast = d;
+            }
+            lineRenderer.SetVertexCount(i);
+        }
+        else {
+            velocityMagnitude = 0.3f;
         }
 
         if (paused) {

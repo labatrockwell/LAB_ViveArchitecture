@@ -17,6 +17,7 @@ public class DrawCommand : Command {
     //public bool commandActive;
     public bool interrupted;
     private float prevTouchpad;
+    private float initialTouch;
     private float extensionFactor;
     private float prevExtensionFactor;
     private Vector3 originalPosition;
@@ -43,7 +44,7 @@ public class DrawCommand : Command {
                     Debug.Log("Trigger pressed");
                     if (!go)
                     {
-                        Debug.Log("Creating go");
+                        //Debug.Log("Creating go");
                         go = new GameObject();
                         go.AddComponent<MeshFilter>();
                         go.AddComponent<MeshRenderer>();
@@ -58,26 +59,32 @@ public class DrawCommand : Command {
                     }
                     else
                     {
-                        Debug.Log("Editing go");
+                        //Debug.Log("Editing go");
                         Debug.Log(drawTool.transform.position);
 
-                        if (device.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                        
+
+                        //record the value of the first touch
+                        if (device.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) {
+                            Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
+                            initialTouch = touchPad.y;
+                        }
+
+                        if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
                         {
                             Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
-                            extensionFactor = (touchPad.y - prevTouchpad);
-                            prevTouchpad = touchPad.y;
-                            extension = drawTool.transform.forward * extensionFactor;
-                        }
-                        else {
-                            extensionFactor = 0.0f;
-                            extension = drawTool.transform.forward * extensionFactor;
+                            //find the difference between the current touch position and the original touch position
+                            extensionFactor = (initialTouch - touchPad.y)/10;
+                            //extensionFactor = (touchPad.y - prevTouchpad)/5;
+                            extension = drawTool.transform.position + (drawTool.transform.forward * extensionFactor);
+                            drawTool.transform.position = extension;
+                            //prevTouchpad = touchPad.y;
                         }
 
                         currLine.AddPoint(drawTool.transform.position);
 
                         float dis = Vector3.Distance(prevPos, drawTool.transform.position);
-                        prevPos = drawTool.transform.position * extensionFactor;
-                        drawTool.transform.position += extension;
+                        prevPos = drawTool.transform.position * extensionFactor;                        
 
                         //pressure of the trigger pull
                         float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
@@ -86,18 +93,17 @@ public class DrawCommand : Command {
                         currLine.setWidth(width / 2);                    
                         numClicks++;
 
-                        prevExtensionFactor = extensionFactor;
                     }
 
                 }
-            }
-            else
-            {
-                if (go) {
-                    go = null;
-                    //commandActive = false;
-                    extensionFactor = 0.0f;
-                    drawTool.transform.localPosition = originalPosition;
+                else
+                {
+                    if (go)
+                    {
+                        go = null;
+                        extensionFactor = 0.0f;
+                        drawTool.transform.localPosition = originalPosition;
+                    }
                 }
             }
         }

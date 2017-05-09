@@ -33,23 +33,14 @@ public class CommandManager : MonoBehaviour {
     }
 	
 	// Update is called once per frame
-	void Update () {
-
-        //if (GetComponent<DrawCommand>().commandActive || GetComponent<TeleportCommand>().commandActive)
-        //{
-        //    //turn off the lineRenderer
-        //    controllerRayCast = rightController.GetComponent<LineRenderer>();
-        //    controllerRayCast.enabled = false;
-        //}
-        //else {
-        //    controllerRayCast = rightController.GetComponent<LineRenderer>();
-        //    controllerRayCast.enabled = true;
-        //}
-        		
+	void Update () {        		
 	}
 
     void OnCommandStart(CommandStartEvent _e) {
         //kill the current command
+        if (activeCommand) {
+            activeCommand.commandActive = false;
+        }
 
         //parse the command
         string command = _e.command;
@@ -58,7 +49,6 @@ public class CommandManager : MonoBehaviour {
         if (command == "dimensionStart") {
             isCommandActive = true;
             activeCommand = GetComponent<DimensionCommand>();
-
             GetComponent<DimensionCommand>().commandActive = true;
             GetComponent<DrawCommand>().commandActive = false;
             GetComponent<TeleportCommand>().commandActive = false;
@@ -68,7 +58,6 @@ public class CommandManager : MonoBehaviour {
         if (command == "drawStart") {
             isCommandActive = true;
             activeCommand = GetComponent<DrawCommand>();
-
             GetComponent<DimensionCommand>().commandActive = false;
             GetComponent<DrawCommand>().commandActive = true;
             GetComponent<TeleportCommand>().commandActive = false;
@@ -78,7 +67,6 @@ public class CommandManager : MonoBehaviour {
         if (command == "teleportStart") {
             isCommandActive = true;
             activeCommand = GetComponent<TeleportCommand>();
-
             GetComponent<DimensionCommand>().commandActive = false;
             GetComponent<DrawCommand>().commandActive = false;
             GetComponent<TeleportCommand>().commandActive = true;
@@ -97,13 +85,19 @@ public class CommandManager : MonoBehaviour {
         }        
     }
 
+
+    //maybe this isn't getting called consistently ...
     void OnCommandResume(CommandResumeEvent _e)
     {
-        foreach (Command command in mCommands) { 
-            if (command.paused)
-            {
+        foreach (Command command in mCommands) {
+            if (command.commandActive) {
                 command.paused = false;
             }
+            //Debug.Log(command + "paused: " + command.paused);
+            //if (command.commandActive && command.paused)
+            //{
+            //    command.paused = false;
+            //}
         }
     }
 
