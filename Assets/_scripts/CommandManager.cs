@@ -49,6 +49,8 @@ public class CommandManager : MonoBehaviour {
         if (command == "dimensionStart") {
             isCommandActive = true;
             activeCommand = GetComponent<DimensionCommand>();
+            activeCommand.paused = false;
+            PauseInactiveCommands();
             GetComponent<DimensionCommand>().commandActive = true;
             GetComponent<DrawCommand>().commandActive = false;
             GetComponent<TeleportCommand>().commandActive = false;
@@ -58,6 +60,8 @@ public class CommandManager : MonoBehaviour {
         if (command == "drawStart") {
             isCommandActive = true;
             activeCommand = GetComponent<DrawCommand>();
+            activeCommand.paused = false;
+            PauseInactiveCommands();
             GetComponent<DimensionCommand>().commandActive = false;
             GetComponent<DrawCommand>().commandActive = true;
             GetComponent<TeleportCommand>().commandActive = false;
@@ -67,6 +71,8 @@ public class CommandManager : MonoBehaviour {
         if (command == "teleportStart") {
             isCommandActive = true;
             activeCommand = GetComponent<TeleportCommand>();
+            activeCommand.paused = false;
+            PauseInactiveCommands();
             GetComponent<DimensionCommand>().commandActive = false;
             GetComponent<DrawCommand>().commandActive = false;
             GetComponent<TeleportCommand>().commandActive = true;
@@ -103,6 +109,27 @@ public class CommandManager : MonoBehaviour {
 
     void OnCommandEnd(CommandEndEvent _e) {
         isCommandActive = false;
+    }
+
+    void PauseInactiveCommands() {
+
+        foreach (Command com in mCommands) {
+            if (!com.Equals(activeCommand) ) {
+                com.paused = true;
+                Debug.Log("Pausing: " + com + " >>> " + com.paused);
+            }
+        }
+    }
+
+    void DisableInactiveCommands() {
+        foreach (Command com in mCommands)
+        {
+            if (!com.Equals(activeCommand))
+            {
+                com.commandActive = false;
+                Debug.Log("Disabling: " + com + " >>> " + com.commandActive);
+            }
+        }
     }
 
 }

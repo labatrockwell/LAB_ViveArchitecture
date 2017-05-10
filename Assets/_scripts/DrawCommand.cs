@@ -5,17 +5,14 @@ public class DrawCommand : Command {
 
     public GameObject controller;
     public GameObject drawTool;
+    public bool interrupted;
 
     private SteamVR_TrackedObject trackedObject;
     private SteamVR_Controller.Device device { get { return SteamVR_Controller.Input((int)trackedObject.index); } }
-
     private GameObject go = null;
     private MeshLineRenderer currLine;
 	private Vector3 prevPos = new Vector3(0,0,0);
 	private int numClicks = 0;
-
-    //public bool commandActive;
-    public bool interrupted;
     private float prevTouchpad;
     private float initialTouch;
     private float extensionFactor;
@@ -42,7 +39,7 @@ public class DrawCommand : Command {
                 if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
                 {
 
-                    Debug.Log("Trigger pressed");
+                    //Debug.Log("Trigger pressed");
                     if (!go)
                     {
                         //Debug.Log("Creating go");
@@ -61,9 +58,7 @@ public class DrawCommand : Command {
                     else
                     {
                         //Debug.Log("Editing go");
-                        Debug.Log(drawTool.transform.position);
-
-                        
+                        //Debug.Log(drawTool.transform.position);                 
 
                         //record the value of the first touch
                         if (device.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) {
@@ -80,21 +75,16 @@ public class DrawCommand : Command {
                             extension = drawTool.transform.position + (drawTool.transform.forward * extensionFactor);
                             drawTool.transform.position = extension;
                         }
-
                         currLine.AddPoint(drawTool.transform.position);
-
                         float dis = Vector3.Distance(prevPos, drawTool.transform.position);
-                        prevPos = drawTool.transform.position * extensionFactor;                        
-
+                        prevPos = drawTool.transform.position * extensionFactor;
                         //pressure of the trigger pull
                         float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
                         //Debug.Log("Width X: " + width);
                         width = width.Remap(0.6f, 1.0f, 0.001f, 0.1f);
                         currLine.setWidth(width / 2);                    
                         numClicks++;
-
                     }
-
                 }
                 else
                 {

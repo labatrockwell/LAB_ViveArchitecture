@@ -6,25 +6,25 @@ public class RayCastController : MonoBehaviour {
 
     private SteamVR_TrackedObject trackedObject;
     private SteamVR_Controller.Device device { get { return SteamVR_Controller.Input((int)trackedObject.index); } }
-
     public GameObject cmdMgr;
     private CommandManager commandManager;
-
     public bool dimsActive;
     public Ray mRay;
     public RaycastHit mHit;
     public bool mRayCastHit;
-
     private bool dimCreated = false;
     private GameObject mDim = null;
     private LineRenderer mLineRend = null;
     private GameObject m_CurrentObject;
     private GameObject m_LastObject;
-
     private int deviceIndex;
+    private int frameCounter;
+    private bool interactingWithMenu;
 
     // Use this for initialization
     void Awake () {
+        interactingWithMenu = false;
+        frameCounter = 0;
         dimsActive = false;        
         mLineRend = gameObject.AddComponent<LineRenderer>(); //preview the rayCast
         mLineRend.startWidth = 0.025f;
@@ -43,7 +43,6 @@ public class RayCastController : MonoBehaviour {
         mLineRend.SetPosition(0, transform.position);
 
         //if a command isn't active, show the line renderer
-        //TODO: create an event listener for commandActive from the CommandManager
         if (commandManager.isCommandActive)
         {
             mLineRend.enabled = false;
@@ -64,9 +63,14 @@ public class RayCastController : MonoBehaviour {
             //Interact with Menu Items
             if (m_CurrentObject.GetComponent<VRInteractiveItem>() != null)
             {
+                frameCounter = 0;
+                interactingWithMenu = true;
                 //show the line renderer if we're interacting with a menu item
                 mLineRend.enabled = true;
+
+                //interrupt the current function
                 EventManagerTypeSafe.instance.TriggerEvent(new CommandInterruptEvent());
+
                 //if the selection has changed
                 if (m_CurrentObject != m_LastObject)
                 {
@@ -85,7 +89,7 @@ public class RayCastController : MonoBehaviour {
                     
                 }
                 else
-                {
+                {         
                     //we're over an object
                     if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
                     {
@@ -96,9 +100,14 @@ public class RayCastController : MonoBehaviour {
                 m_LastObject = m_CurrentObject;
             }
             else {
-                Debug.Log("Not interacting with a menu item");
-                //call this only once we leave a menu item
-                EventManagerTypeSafe.instance.TriggerEvent(new CommandResumeEvent());
+                //this only needs to be called on the first frame that nothing is being touched
+                if (interactingWithMenu ) {
+                    frameCounter++;
+                    interactingWithMenu = false;
+                    Debug.Log("Not interacting with a menu item");
+                    //call this only once we leave a menu item
+                    EventManagerTypeSafe.instance.TriggerEvent( new CommandResumeEvent() );
+                }
             }
         }
         else {
