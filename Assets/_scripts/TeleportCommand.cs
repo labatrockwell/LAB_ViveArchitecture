@@ -6,6 +6,8 @@ public class TeleportCommand : Command {
 
 	public GameObject teleportee;
 	public GameObject originObject;
+    public GameObject vrCamera;
+
 	private Color color = new Color(0f,164f,255f,0.5f);
 
     private float prevTouchPos;
@@ -65,12 +67,14 @@ public class TeleportCommand : Command {
             //if right trigger is pulled
             if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
             {
+                SteamVR.instance.hmd.ResetSeatedZeroPose();
                 teleportee.transform.position = target.transform.position;
                 //commandActive = false;
                 line.GetComponent<LineRenderer>().enabled = false;
                 target.GetComponent<MeshRenderer>().enabled = false;
                 //recenter VR
-                UnityEngine.VR.InputTracking.Recenter();
+                //UnityEngine.VR.InputTracking.Recenter();
+                //vrCamera.transform.localPosition = new Vector3(0, 0, 0);
             }
 
             if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))

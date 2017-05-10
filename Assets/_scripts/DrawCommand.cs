@@ -21,9 +21,10 @@ public class DrawCommand : Command {
     private float extensionFactor;
     private float prevExtensionFactor;
     private Vector3 originalPosition;
+    private Vector3 originalWorldPosition;
 
-   	// Use this for initialization
-	void Awake () {
+    // Use this for initialization
+    void Awake () {
         trackedObject = controller.GetComponent<SteamVR_TrackedObject>();
         commandActive = false;
         extensionFactor = 0.0f;
@@ -74,11 +75,10 @@ public class DrawCommand : Command {
                         {
                             Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
                             //find the difference between the current touch position and the original touch position
-                            extensionFactor = (initialTouch - touchPad.y)/10;
+                            extensionFactor = (touchPad.y-initialTouch)/10;
                             //extensionFactor = (touchPad.y - prevTouchpad)/5;
                             extension = drawTool.transform.position + (drawTool.transform.forward * extensionFactor);
                             drawTool.transform.position = extension;
-                            //prevTouchpad = touchPad.y;
                         }
 
                         currLine.AddPoint(drawTool.transform.position);
@@ -89,7 +89,7 @@ public class DrawCommand : Command {
                         //pressure of the trigger pull
                         float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
                         //Debug.Log("Width X: " + width);
-                        width = width.Remap(0.15f, 1.0f, 0.001f, 0.1f);
+                        width = width.Remap(0.6f, 1.0f, 0.001f, 0.1f);
                         currLine.setWidth(width / 2);                    
                         numClicks++;
 

@@ -66,7 +66,7 @@ public class RayCastController : MonoBehaviour {
             {
                 //show the line renderer if we're interacting with a menu item
                 mLineRend.enabled = true;
-
+                EventManagerTypeSafe.instance.TriggerEvent(new CommandInterruptEvent());
                 //if the selection has changed
                 if (m_CurrentObject != m_LastObject)
                 {
@@ -81,8 +81,8 @@ public class RayCastController : MonoBehaviour {
                         }
                     }
                     //Debug.Log("Entered: " + m_CurrentObject.name);
-                    EventManagerTypeSafe.instance.TriggerEvent(new CommandInterruptEvent());
                     m_CurrentObject.GetComponent<VRInteractiveItem>().Enter();
+                    
                 }
                 else
                 {
