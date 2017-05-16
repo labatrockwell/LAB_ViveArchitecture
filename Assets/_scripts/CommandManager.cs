@@ -49,28 +49,23 @@ public class CommandManager : MonoBehaviour {
         if (command == "dimensionStart") {
             isCommandActive = true;
             activeCommand = GetComponent<DimensionCommand>();
-            activeCommand.paused = false;
-            PauseInactiveCommands();
-            DisableInactiveCommands();
         }
 
         if (command == "drawStart") {
             isCommandActive = true;
             activeCommand = GetComponent<DrawCommand>();
-            activeCommand.paused = false;
-            PauseInactiveCommands();
-            DisableInactiveCommands();
-
         }
 
         if (command == "teleportStart") {
             isCommandActive = true;
-            activeCommand = GetComponent<TeleportCommand>();
-            activeCommand.paused = false;
-            PauseInactiveCommands();
-            DisableInactiveCommands();
-         
+            activeCommand = GetComponent<TeleportCommand>();         
         }
+
+        activeCommand.commandActive = true;
+        activeCommand.paused = false;
+        PauseInactiveCommands();
+        DisableInactiveCommands();
+
     }
 
     void OnCommandInterrupt(CommandInterruptEvent _e) {
@@ -79,18 +74,16 @@ public class CommandManager : MonoBehaviour {
         {
             //pause the active command
             if (command.commandActive) {
-                command.paused = true;
+                command.Pause();
             }
         }        
     }
 
-
-    //maybe this isn't getting called consistently ...
     void OnCommandResume(CommandResumeEvent _e)
     {
         foreach (Command command in mCommands) {
             if (command.commandActive) {
-                command.paused = false;
+                command.Unpause();
             }
         }
     }
@@ -104,7 +97,6 @@ public class CommandManager : MonoBehaviour {
         foreach (Command com in mCommands) {
             if (!com.Equals(activeCommand) ) {
                 com.paused = true;
-                Debug.Log("Pausing: " + com + " >>> " + com.paused);
             }
         }
     }
@@ -115,7 +107,6 @@ public class CommandManager : MonoBehaviour {
             if (!com.Equals(activeCommand))
             {
                 com.commandActive = false;
-                Debug.Log("Disabling: " + com + " >>> " + com.commandActive);
             }
         }
     }

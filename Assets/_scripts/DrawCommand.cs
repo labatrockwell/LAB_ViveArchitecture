@@ -32,14 +32,43 @@ public class DrawCommand : Command {
 	// Update is called once per frame
 	void Update () {
 
-        if (commandActive) {
-            if (!paused) {
+        if (commandActive)
+        {
+            if (!paused)
+            {
+                //show the draw tool cursor
+                drawTool.SetActive(true);
+
                 //Debug.Log("DrawCommandActive");
                 Vector3 extension;
-                if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+
+                // CONTROL EXTENSION OF THE DRAW TOOL
+                //record the value of the first touch
+                if (device.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad))
+                {
+                    Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
+                    initialTouch = touchPad.y;
+                }
+
+                if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
                 {
 
-                    //Debug.Log("Trigger pressed");
+                    Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
+                    if (Mathf.Abs(touchPad.y - prevTouchpad) > .01f) {
+                        //find the difference between the current touch position and the original touch position
+                        extensionFactor = (touchPad.y - initialTouch) / 10;
+                        //extensionFactor = (touchPad.y - prevTouchpad)/5;
+                        extension = drawTool.transform.position + (drawTool.transform.forward * extensionFactor);
+                        drawTool.transform.position = extension;
+                        prevTouchpad = touchPad.y;
+
+                    }
+
+                }
+
+
+                if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+                {
                     if (!go)
                     {
                         //Debug.Log("Creating go");
@@ -57,24 +86,7 @@ public class DrawCommand : Command {
                     }
                     else
                     {
-                        //Debug.Log("Editing go");
-                        //Debug.Log(drawTool.transform.position);                 
 
-                        //record the value of the first touch
-                        if (device.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) {
-                            Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
-                            initialTouch = touchPad.y;
-                        }
-
-                        if (device.GetTouch(SteamVR_Controller.ButtonMask.Touchpad))
-                        {
-                            Vector2 touchPad = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Touchpad);
-                            //find the difference between the current touch position and the original touch position
-                            extensionFactor = (touchPad.y-initialTouch)/10;
-                            //extensionFactor = (touchPad.y - prevTouchpad)/5;
-                            extension = drawTool.transform.position + (drawTool.transform.forward * extensionFactor);
-                            drawTool.transform.position = extension;
-                        }
                         currLine.AddPoint(drawTool.transform.position);
                         float dis = Vector3.Distance(prevPos, drawTool.transform.position);
                         prevPos = drawTool.transform.position * extensionFactor;
@@ -82,20 +94,33 @@ public class DrawCommand : Command {
                         float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
                         //Debug.Log("Width X: " + width);
                         width = width.Remap(0.6f, 1.0f, 0.001f, 0.1f);
-                        currLine.setWidth(width / 2);                    
+                        currLine.setWidth(width / 2);
                         numClicks++;
                     }
                 }
                 else
                 {
+
+                    //
                     if (go)
                     {
                         go = null;
                         extensionFactor = 0.0f;
-                        drawTool.transform.localPosition = originalPosition;
+                        //drawTool.transform.localPosition = originalPosition;
                     }
                 }
             }
+            else
+            {
+                //COMMAND IS PAUSED                
+                //hide the tool cursor
+                drawTool.SetActive(false);
+            }
+        }
+        else {
+            //if the command is no longer active, reset the transform of the draw tool
+            drawTool.transform.localPosition = originalPosition;
+            drawTool.SetActive(false);
         }
     }
 }

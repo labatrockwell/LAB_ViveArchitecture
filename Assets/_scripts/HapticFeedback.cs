@@ -10,11 +10,10 @@ public class HapticFeedback : MonoBehaviour {
     // Use this for initialization
     void Start () {
         trackedObject = gameObject.GetComponent<SteamVR_TrackedObject>();
-    }
-	
+    }	
 
-    void OnCollisionEnter(Collision col) {
+    void OnTriggerEnter(Collider col) {
         Debug.LogWarning("Hit Something!");
-        SteamVR_Controller.Input((int)device.index).TriggerHapticPulse(500);
+        SteamVR_Controller.Input((int)device.index).TriggerHapticPulse(1500);
     }
 }
