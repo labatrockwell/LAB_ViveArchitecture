@@ -51,10 +51,7 @@ public class CommandManager : MonoBehaviour {
             activeCommand = GetComponent<DimensionCommand>();
             activeCommand.paused = false;
             PauseInactiveCommands();
-            GetComponent<DimensionCommand>().commandActive = true;
-            GetComponent<DrawCommand>().commandActive = false;
-            GetComponent<TeleportCommand>().commandActive = false;
-            //disable all other commands
+            DisableInactiveCommands();
         }
 
         if (command == "drawStart") {
@@ -62,10 +59,8 @@ public class CommandManager : MonoBehaviour {
             activeCommand = GetComponent<DrawCommand>();
             activeCommand.paused = false;
             PauseInactiveCommands();
-            GetComponent<DimensionCommand>().commandActive = false;
-            GetComponent<DrawCommand>().commandActive = true;
-            GetComponent<TeleportCommand>().commandActive = false;
-            //disable all other commands
+            DisableInactiveCommands();
+
         }
 
         if (command == "teleportStart") {
@@ -73,10 +68,8 @@ public class CommandManager : MonoBehaviour {
             activeCommand = GetComponent<TeleportCommand>();
             activeCommand.paused = false;
             PauseInactiveCommands();
-            GetComponent<DimensionCommand>().commandActive = false;
-            GetComponent<DrawCommand>().commandActive = false;
-            GetComponent<TeleportCommand>().commandActive = true;
-            //disable all other commands           
+            DisableInactiveCommands();
+         
         }
     }
 
@@ -99,11 +92,6 @@ public class CommandManager : MonoBehaviour {
             if (command.commandActive) {
                 command.paused = false;
             }
-            //Debug.Log(command + "paused: " + command.paused);
-            //if (command.commandActive && command.paused)
-            //{
-            //    command.paused = false;
-            //}
         }
     }
 

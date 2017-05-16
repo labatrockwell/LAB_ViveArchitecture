@@ -12,7 +12,7 @@ public class DrawLineManager : MonoBehaviour {
 	private Vector3 prevPos = new Vector3(0,0,0);
 	private int numClicks = 0;
 	public bool drawingOn;
-	public bool save, clearLines, recreateLines;
+    public bool save = false, clearLines = false, recreateLines = false;
 	public List<ListWrapper> mLines;
 
 
