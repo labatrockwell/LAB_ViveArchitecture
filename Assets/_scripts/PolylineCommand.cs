@@ -60,6 +60,9 @@ public class PolylineCommand : Command {
 
     public override void EndCommand()
     {
+        //eliminate last position in the linerender
+        mLineRend.positionCount = mPolyLinePts.Count;
+
         commandActive = false;
         drawTool.SetActive(false);
         drawTool.transform.localPosition = originalPosition;
