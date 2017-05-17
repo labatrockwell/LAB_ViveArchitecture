@@ -58,10 +58,6 @@ public class DrawCommand : Command {
         {
             if (!paused)
             {
-                //show the draw tool cursor
-                //drawTool.SetActive(true);
-
-                //Debug.Log("DrawCommandActive");
                 Vector3 extension;
 
                 // CONTROL EXTENSION OF THE DRAW TOOL
@@ -87,7 +83,6 @@ public class DrawCommand : Command {
                     }
 
                 }
-
 
                 if (device.GetPress(SteamVR_Controller.ButtonMask.Trigger))
                 {
@@ -121,9 +116,7 @@ public class DrawCommand : Command {
                     }
                 }
                 else
-                {
-
-                    //
+                { //end the current line
                     if (go)
                     {
                         go = null;
@@ -132,17 +125,6 @@ public class DrawCommand : Command {
                     }
                 }
             }
-            else
-            {
-                //COMMAND IS PAUSED                
-                //hide the tool cursor
-                //drawTool.SetActive(false);
-            }
-        }
-        else {
-            //if the command is no longer active, reset the transform of the draw tool
-            //drawTool.transform.localPosition = originalPosition;
-            //drawTool.SetActive(false);
         }
     }
 }

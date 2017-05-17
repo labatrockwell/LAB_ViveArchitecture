@@ -39,7 +39,7 @@ public class CommandManager : MonoBehaviour {
     void OnCommandStart(CommandStartEvent _e) {
         //kill the current command
         if (activeCommand) {
-            activeCommand.commandActive = false;
+            activeCommand.EndCommand();
         }
 
         //parse the command
@@ -97,13 +97,20 @@ public class CommandManager : MonoBehaviour {
 
     void OnCommandEnd(CommandEndEvent _e) {
         isCommandActive = false;
+        foreach (Command command in mCommands)
+        {
+            if (command.commandActive)
+            {
+                command.EndCommand();
+            }
+        }
     }
 
     void PauseInactiveCommands() {
 
         foreach (Command com in mCommands) {
             if (!com.Equals(activeCommand) ) {
-                com.Pause();
+                com.PauseCommand();
             }
         }
     }

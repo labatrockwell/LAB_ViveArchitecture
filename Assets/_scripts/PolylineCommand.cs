@@ -14,6 +14,7 @@ public class PolylineCommand : Command {
     private GameObject mGo;
     private LineRenderer mLineRend;
     public Material mLineMaterial;
+    private List<Vector3> mPolyLinePts;
 
     private Vector3 prevPos = new Vector3(0, 0, 0);
     private int numClicks = 0;
@@ -27,6 +28,7 @@ public class PolylineCommand : Command {
     // Use this for initialization
     void Awake()
     {
+        mPolyLinePts = new List<Vector3>();
         trackedObject = controller.GetComponent<SteamVR_TrackedObject>();
         commandActive = false;
         extensionFactor = 0.0f;
@@ -39,9 +41,32 @@ public class PolylineCommand : Command {
         mGo = null;
 	}
 
-    public new void StartCommand() {
+    public override void StartCommand() {
         commandActive = true;
         drawTool.SetActive(true);
+    }
+
+    public override void PauseCommand()
+    {
+        paused = true;
+        drawTool.SetActive(false);
+    }
+
+    public override void ResumeCommand()
+    {
+        paused = false;
+        drawTool.SetActive(true);
+    }
+
+    public override void EndCommand()
+    {
+        commandActive = false;
+        drawTool.SetActive(false);
+        drawTool.transform.localPosition = originalPosition;
+        mGo = null;
+        mLineRend = null;
+        extensionFactor = 0.0f;
+        mPolyLinePts.Clear();
     }
 
     // Update is called once per frame
@@ -78,17 +103,6 @@ public class PolylineCommand : Command {
                     }
                 }
 
-                // X 1. when the trigger is first pulled, create a new gameObject 
-                // 2. parent that gameObject to a parent gmOb 
-                // 3. assign material, width to a lineRenderer of the gmObj
-                // 4. set the first point of the line renderer
-                // 4. each subsequent press adds a new point to the lineRenderer
-                // 5. if the command is inactive, set gmOb to null
-
-                if (pointCounter > 0)
-                {
-                    mLineRend.SetPosition(pointCounter+1, drawTool.transform.position);
-                }
 
                 // TRIGGER INTERACTION
                 if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
@@ -102,35 +116,31 @@ public class PolylineCommand : Command {
                         mLineRend.startWidth = 0.01f;
                         mLineRend.endWidth = 0.01f;
                         //go.AddComponent<Interaction>();
-                        mLineRend.SetPosition(0, drawTool.transform.position);
+                        mPolyLinePts.Add(drawTool.transform.position);
+                        //mLineRend.SetPosition(0, drawTool.transform.position);
                         pointCounter++;
                     }
                     else
                     {
-                        
-                        mLineRend.SetPosition(pointCounter, drawTool.transform.position);
-                        pointCounter++;                       
-
+                        mPolyLinePts.Add(drawTool.transform.position);
+                        //mLineRend.SetPosition(pointCounter, drawTool.transform.position);
+                        pointCounter++;          
                     }
                 }
+
+                Vector3[] points = new Vector3[mPolyLinePts.Count+1];
+                Debug.Log("Size: " + points.Length);
+
+                //copy the list points into the array
+                for (int i = 0; i < points.Length - 1; i++)
+                {
+                    points[i] = mPolyLinePts[i];
+                }
+
+                points[points.Length - 1] = drawTool.transform.position;
+                mLineRend.positionCount = points.Length;
+                mLineRend.SetPositions(points);
             }
         }
-        //else
-        //{
-        //    //
-        //}
     }
-
-    public new void EndCommand() {
-        commandActive = false;
-        drawTool.SetActive(false);
-        if (mGo)
-        {
-            mGo = null;
-            extensionFactor = 0.0f;
-            //drawTool.transform.localPosition = originalPosition;
-        }
-    }
-
-
 }
