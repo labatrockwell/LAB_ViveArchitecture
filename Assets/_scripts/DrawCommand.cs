@@ -29,6 +29,28 @@ public class DrawCommand : Command {
         interrupted = false;
 	}
 
+    public override void StartCommand() {
+        Debug.Log("Starting Draw Command!!!");
+        commandActive = true;
+        drawTool.SetActive(true);
+    }
+
+    public override void PauseCommand() {
+        paused = true;
+        drawTool.SetActive(false);
+    }
+
+    public override void ResumeCommand() {
+        paused = false;
+        drawTool.SetActive(true);
+    }
+
+    public override void EndCommand() {
+        commandActive = false;
+        drawTool.transform.localPosition = originalPosition;
+        drawTool.SetActive(false);
+    }
+
 	// Update is called once per frame
 	void Update () {
 
@@ -37,7 +59,7 @@ public class DrawCommand : Command {
             if (!paused)
             {
                 //show the draw tool cursor
-                drawTool.SetActive(true);
+                //drawTool.SetActive(true);
 
                 //Debug.Log("DrawCommandActive");
                 Vector3 extension;
@@ -77,7 +99,7 @@ public class DrawCommand : Command {
                         go.AddComponent<MeshRenderer>();
                         go.AddComponent<MeshCollider>();
                         currLine = go.AddComponent<MeshLineRenderer>();
-                        go.AddComponent<Interaction>();
+                        //go.AddComponent<Interaction>();
                         float width = device.GetAxis(Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger).x;
                         //Debug.Log("Width X: " + width);
                         width = width.Remap(0.15f, 1.0f, 0.001f, 0.025f);
@@ -114,13 +136,13 @@ public class DrawCommand : Command {
             {
                 //COMMAND IS PAUSED                
                 //hide the tool cursor
-                drawTool.SetActive(false);
+                //drawTool.SetActive(false);
             }
         }
         else {
             //if the command is no longer active, reset the transform of the draw tool
-            drawTool.transform.localPosition = originalPosition;
-            drawTool.SetActive(false);
+            //drawTool.transform.localPosition = originalPosition;
+            //drawTool.SetActive(false);
         }
     }
 }

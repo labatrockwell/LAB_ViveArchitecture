@@ -61,7 +61,14 @@ public class CommandManager : MonoBehaviour {
             activeCommand = GetComponent<TeleportCommand>();         
         }
 
-        activeCommand.commandActive = true;
+        if (command == "polylineStart")
+        {
+            isCommandActive = true;
+            activeCommand = GetComponent<PolylineCommand>();
+        }
+
+        Debug.Log("Active Command: " + activeCommand);
+        activeCommand.StartCommand();
         activeCommand.paused = false;
         PauseInactiveCommands();
         DisableInactiveCommands();
@@ -74,7 +81,7 @@ public class CommandManager : MonoBehaviour {
         {
             //pause the active command
             if (command.commandActive) {
-                command.Pause();
+                command.PauseCommand();
             }
         }        
     }
@@ -83,7 +90,7 @@ public class CommandManager : MonoBehaviour {
     {
         foreach (Command command in mCommands) {
             if (command.commandActive) {
-                command.Unpause();
+                command.ResumeCommand();
             }
         }
     }
@@ -96,7 +103,7 @@ public class CommandManager : MonoBehaviour {
 
         foreach (Command com in mCommands) {
             if (!com.Equals(activeCommand) ) {
-                com.paused = true;
+                com.Pause();
             }
         }
     }
@@ -106,7 +113,8 @@ public class CommandManager : MonoBehaviour {
         {
             if (!com.Equals(activeCommand))
             {
-                com.commandActive = false;
+                //com.commandActive = false;
+                com.EndCommand();
             }
         }
     }

@@ -8,12 +8,29 @@ public class Command : MonoBehaviour {
     public string commandName;
     public bool paused = false;
 
-    public void Pause() {
+    public virtual void Pause() {
         this.paused = true;
     }
 
-    public void Unpause() {
+    public virtual void Unpause() {
         this.paused = false;
+    }
+
+    public virtual void StartCommand() {
+        Debug.Log("Base Class");
+        this.commandActive = true;
+    }
+
+    public virtual void PauseCommand() {
+        this.paused = true;
+    }
+
+    public virtual void ResumeCommand() {
+        this.paused = false;
+    }
+
+    public virtual void EndCommand() {
+        this.commandActive = false;
     }
 
 }
