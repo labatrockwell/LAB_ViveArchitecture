@@ -30,7 +30,6 @@ public class DrawCommand : Command {
 	}
 
     public override void StartCommand() {
-        Debug.Log("Starting Draw Command!!!");
         commandActive = true;
         drawTool.SetActive(true);
     }
@@ -103,7 +102,6 @@ public class DrawCommand : Command {
                     }
                     else
                     {
-
                         currLine.AddPoint(drawTool.transform.position);
                         float dis = Vector3.Distance(prevPos, drawTool.transform.position);
                         prevPos = drawTool.transform.position * extensionFactor;
@@ -121,7 +119,6 @@ public class DrawCommand : Command {
                     {
                         go = null;
                         extensionFactor = 0.0f;
-                        //drawTool.transform.localPosition = originalPosition;
                     }
                 }
             }

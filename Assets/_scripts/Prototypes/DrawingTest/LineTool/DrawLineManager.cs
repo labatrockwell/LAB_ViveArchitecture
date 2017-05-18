@@ -91,7 +91,7 @@ public class DrawLineManager : MonoBehaviour {
 		}
 	}
 
-	void Save() {
+	public void Save() {
 		var lineObjects = new List<GameObject>(GameObject.FindGameObjectsWithTag("LineTag"));
 		mLines.Clear ();
 		foreach(GameObject _go in lineObjects)

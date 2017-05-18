@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Submenu
+  - LineTag
   layers:
   - Default
   - TransparentFX
